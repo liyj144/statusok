@@ -1,0 +1,73 @@
+{
+"database":{
+	"influxDb":{
+		"host":"139.196.7.26",
+		"port":8086,
+		"databaseName":"statusok",
+		"username":"root",
+		"password":"liyj131"
+	}
+},
+"notifications":{
+	"mail":{
+		"smtpHost":"smtp.163.com",
+		"port":25,
+		"username":"lyjtest3@163.com",
+		"password":"intsig",
+		"from":"lyjtest3@163.com",
+		"to":"liyj144@163.com"
+	}
+},
+"requests":[
+		{
+			"url":"http://127.0.0.1:3333/creditapp/user/login",
+			"requestType":"POST",
+			"headers":{
+				"Content-Type":"application/json"
+			},
+			"formParams":{
+				"userPhone":"18912547809",
+				"userPassword": "123qaz"
+			},
+			"responseCode":200,
+			"responseTime":800,
+			"checkEvery":300,
+			"urlType": "preRequest",
+			"authMethod": "cookie",
+			"authKey": "accessToken"
+		},
+		{
+			"url":"http://127.0.0.1:3333/creditapp/company/detail",
+			"requestType":"POST",
+			"headers":{
+				"Content-Type":"application/json"
+			},
+			"formParams":{
+				"recordId":"1121"
+			},			
+			"responseCode":200,
+			"responseTime":800,
+			"checkEvery":300,
+			"urlType": "request",
+			"authMethod": "cookie",
+			"authKey": "accessToken"
+		},
+		{
+			"url":"http://127.0.0.1:7070/creditapp/company/brief",
+			"requestType":"POST",
+			"headers":{
+				"Content-Type":"application/json"
+			},
+			"formParams":{
+				"name":"新飞凡",
+				"province":"310000"
+			},			
+			"responseCode":200,
+			"responseTime":800,
+			"checkEvery":30,
+			"urlType": "request",
+			"authMethod": "cookie",
+			"authKey": "accessToken"
+		}
+	]
+}

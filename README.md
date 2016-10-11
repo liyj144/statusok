@@ -2,6 +2,8 @@
 
 Monitor your Website and APIs from your computer.Get notified through Slack or E-mail when your server is down or response time is more than expected.
 
+## This project is for auto monitor API status. 
+Project is Forked from statusok(https://github.com/sanathp/statusok.git). And add auto login , record response body, move response code from influxDb field to tag.
 
 ## Simple Version
 

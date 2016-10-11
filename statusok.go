@@ -3,16 +3,17 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/codegangsta/cli"
-	"github.com/sanathp/statusok/database"
-	"github.com/sanathp/statusok/notify"
-	"github.com/sanathp/statusok/requests"
 	"io"
 	"math/rand"
 	"net/http"
 	"os"
 	"strconv"
 	"time"
+
+	"github.com/codegangsta/cli"
+	"github.com/liyj144/statusok/database"
+	"github.com/liyj144/statusok/notify"
+	"github.com/liyj144/statusok/requests"
 )
 
 type configParser struct {
@@ -105,6 +106,7 @@ func startMonitoring(configFileName string, logFileName string) {
 	database.Initialize(ids, config.NotifyWhen.MeanResponseCount, config.NotifyWhen.ErrorCount)
 
 	//Initialize and start monitoring all the apis
+
 	requests.RequestsInit(reqs, config.Concurrency)
 	requests.StartMonitoring()
 

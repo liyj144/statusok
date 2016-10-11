@@ -5,16 +5,19 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/sanathp/statusok/database"
 	"io"
+	"io/ioutil"
 	"net/http"
 	"net/url"
 	"os"
 	"strconv"
 	"time"
+
+	"github.com/liyj144/statusok/database"
 )
 
 var (
+	authValue      = ""
 	RequestsList   []RequestConfig
 	requestChannel chan RequestConfig
 	throttle       chan int
@@ -41,6 +44,9 @@ type RequestConfig struct {
 	ResponseCode int               `json:"responseCode"`
 	ResponseTime int64             `json:"responseTime"`
 	CheckEvery   time.Duration     `json:"checkEvery"`
+	UrlType      string            `json:"urlType"`
+	AuthMethod   string            `json:"authMethod"`
+	AuthKey      string            `json:"authKey"`
 }
 
 //Set Id for request
@@ -245,7 +251,11 @@ func PerformRequest(requestConfig RequestConfig, throttle chan int) error {
 
 	//Add headers to the request
 	AddHeaders(request, requestConfig.Headers)
-
+	if requestConfig.UrlType == "request" {
+		authHeader := map[string]string{}
+		authHeader[requestConfig.AuthKey] = authValue
+		AddHeaders(request, authHeader)
+	}
 	//TODO: put timeout ?
 	/*
 		timeout := 10 * requestConfig.ResponseTime
@@ -297,7 +307,21 @@ func PerformRequest(requestConfig RequestConfig, throttle chan int) error {
 	}
 
 	elapsed := time.Since(start)
+	requestData, _ := ioutil.ReadAll(getResponse.Body)
 
+	if requestConfig.UrlType == "preRequest" {
+		// save token
+		body := make(map[string]interface{})
+		if err := json.Unmarshal(requestData, &body); err == nil {
+			fmt.Println("请求登陆接口返回内容：")
+			fmt.Println(body)
+			/*
+				if body != nil && body.accessToken != nil {
+					authValue := body.accessToken
+				}
+			*/
+		}
+	}
 	//Request succesfull . Add infomartion to Database
 	go database.AddRequestInfo(database.RequestInfo{
 		Id:                   requestConfig.Id,
@@ -306,6 +330,7 @@ func PerformRequest(requestConfig RequestConfig, throttle chan int) error {
 		ResponseCode:         getResponse.StatusCode,
 		ResponseTime:         elapsed.Nanoseconds() / 1000000,
 		ExpectedResponseTime: requestConfig.ResponseTime,
+		ResponseBody:         string(requestData),
 	})
 
 	return nil
