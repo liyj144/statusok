@@ -254,6 +254,7 @@ func PerformRequest(requestConfig RequestConfig, throttle chan int) error {
 	if requestConfig.UrlType == "request" {
 		authHeader := map[string]string{}
 		authHeader[requestConfig.AuthKey] = authValue
+		fmt.Println("R: use accesstoken to request API：%v", authValue)
 		AddHeaders(request, authHeader)
 	}
 	//TODO: put timeout ?
@@ -313,13 +314,13 @@ func PerformRequest(requestConfig RequestConfig, throttle chan int) error {
 		// save token
 		body := make(map[string]interface{})
 		if err := json.Unmarshal(requestData, &body); err == nil {
-			fmt.Println("请求登陆接口返回内容：")
-			fmt.Println(body)
-			/*
-				if body != nil && body.accessToken != nil {
-					authValue := body.accessToken
-				}
-			*/
+			if body != nil && body["resultCode"] == "00000" {
+				dataMap := (body["dataMap"]).(map[string]interface{})
+				accessToken := dataMap["accessToken"]
+				fmt.Println("PRE: get accesstoken success：%v", accessToken)
+				authValue := accessToken
+			}
+
 		}
 	}
 	//Request succesfull . Add infomartion to Database

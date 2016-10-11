@@ -53,7 +53,7 @@
 			"authKey": "accessToken"
 		},
 		{
-			"url":"http://127.0.0.1:7070/creditapp/company/brief",
+			"url":"http://127.0.0.1:3333/creditapp/company/brief",
 			"requestType":"POST",
 			"headers":{
 				"Content-Type":"application/json"
