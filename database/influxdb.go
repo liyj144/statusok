@@ -81,12 +81,12 @@ func (influxDb InfluxDb) Initialize() error {
 func (influxDb InfluxDb) AddRequestInfo(requestInfo RequestInfo) error {
 
 	tags := map[string]string{
-		"requestId":   strconv.Itoa(requestInfo.Id),
-		"requestType": requestInfo.RequestType,
+		"requestId":    strconv.Itoa(requestInfo.Id),
+		"requestType":  requestInfo.RequestType,
+		"responseCode": strconv.Itoa(requestInfo.ResponseCode),
 	}
 	fields := map[string]interface{}{
 		"responseTime": requestInfo.ResponseTime,
-		"responseCode": requestInfo.ResponseCode,
 	}
 
 	bps, err := client.NewBatchPoints(client.BatchPointsConfig{
@@ -124,13 +124,13 @@ func (influxDb InfluxDb) AddRequestInfo(requestInfo RequestInfo) error {
 func (influxDb InfluxDb) AddErrorInfo(errorInfo ErrorInfo) error {
 
 	tags := map[string]string{
-		"requestId":   strconv.Itoa(errorInfo.Id),
-		"requestType": errorInfo.RequestType,
-		"reason":      errorInfo.Reason.Error(),
+		"requestId":    strconv.Itoa(errorInfo.Id),
+		"requestType":  errorInfo.RequestType,
+		"responseCode": strconv.Itoa(errorInfo.ResponseCode),
+		"reason":       errorInfo.Reason.Error(),
 	}
 	fields := map[string]interface{}{
 		"responseBody": errorInfo.ResponseBody,
-		"responseCode": errorInfo.ResponseCode,
 		"otherInfo":    errorInfo.OtherInfo,
 	}
 
