@@ -48,7 +48,7 @@
 			},			
 			"responseCode":200,
 			"responseTime":800,
-			"checkEvery":300,
+			"checkEvery":30,
 			"urlType": "request",
 			"authMethod": "cookie",
 			"authKey": "accessToken"

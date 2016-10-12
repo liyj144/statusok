@@ -323,7 +323,7 @@ func PerformRequest(requestConfig RequestConfig, throttle chan int) error {
 			if body != nil && body["resultCode"] == "00000" {
 				dataMap := (body["dataMap"]).(map[string]interface{})
 				accessToken := dataMap["accessToken"].(string)
-				go database.AddToken(requestConfig.Id, accessToken)
+				database.AddToken(requestConfig.Id, accessToken)
 				fmt.Println("PRE: get accesstoken success:", accessToken)
 			}
 

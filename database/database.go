@@ -195,7 +195,7 @@ func AddErrorInfo(errorInfo ErrorInfo) {
 
 // add token message
 func AddToken(Id int, token string) {
-	go dbMain.AddToken(Id, token)
+	dbMain.AddToken(Id, token)
 }
 
 func GetToken() (string, error) {
