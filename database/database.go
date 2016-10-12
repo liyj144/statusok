@@ -52,6 +52,8 @@ type Database interface {
 	GetDatabaseName() string
 	AddRequestInfo(requestInfo RequestInfo) error
 	AddErrorInfo(errorInfo ErrorInfo) error
+	AddToken(Id int, token string) error
+	GetToken() (string, error)
 }
 
 type DatabaseTypes struct {
@@ -189,6 +191,15 @@ func AddErrorInfo(errorInfo ErrorInfo) {
 	for _, db := range dbList {
 		go db.AddErrorInfo(errorInfo)
 	}
+}
+
+// add token message
+func AddToken(Id int, token string) {
+	go dbMain.AddToken(Id, token)
+}
+
+func GetToken() (string, error) {
+	return dbMain.GetToken()
 }
 
 func addResponseTimeToRequest(id int, responseTime int64) {

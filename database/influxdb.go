@@ -17,6 +17,7 @@ type InfluxDb struct {
 	DatabaseName string `json:"databaseName"`
 	Username     string `json:"username"`
 	Password     string `json:"password"`
+	AuthTable    string `json:"authTable"`
 }
 
 var (
@@ -199,6 +200,47 @@ func (influxDb InfluxDb) GetMeanResponseTime(Url string, span int) (float64, err
 		return val, nil
 	}
 	return 0, errors.New("error")
+}
+
+func (influxDb InfluxDb) AddToken(Id int, token string) error {
+	tags := map[string]string{
+		"requestId": strconv.Itoa(Id),
+	}
+	fields := map[string]interface{}{
+		"token": token,
+	}
+	point, err := client.NewPoint(
+		influxDb.AuthTable,
+		tags,
+		fields,
+		time.Now(),
+	)
+	if err != nil {
+		return err
+	}
+	bps, err := client.NewBatchPoints(client.BatchPointsConfig{
+		Database:  influxDb.DatabaseName,
+		Precision: "ms",
+	})
+	if err != nil {
+		return err
+	}
+	fmt.Println("start to add token %s to db: %s", token, influxDb.AuthTable)
+	bps.AddPoint(point)
+	err = influxDBcon.Write(bps)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (influxDb InfluxDb) GetToken() (string, error) {
+	res, err := queryDB(fmt.Sprintf(`select * from "%s" order by time desc limit 1`,
+		influxDb.AuthTable), influxDb.DatabaseName)
+	if err != nil {
+		return "", err
+	}
+	return (res[0].Series[0].Values[0][2]).(string), nil
 }
 
 func createDatabase(databaseName string) error {

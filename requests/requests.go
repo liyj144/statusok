@@ -253,9 +253,15 @@ func PerformRequest(requestConfig RequestConfig, throttle chan int) error {
 	AddHeaders(request, requestConfig.Headers)
 	if requestConfig.UrlType == "request" {
 		authHeader := map[string]string{}
-		authHeader[requestConfig.AuthKey] = authValue
-		fmt.Println("R: use accesstoken to request API：%v", authValue)
-		AddHeaders(request, authHeader)
+		authValue, err := database.GetToken()
+		if err == nil {
+			authHeader[requestConfig.AuthKey] = authValue
+			fmt.Println("R: use accesstoken to request API:", authValue)
+			AddHeaders(request, authHeader)
+		} else {
+			// TODO add pre_request to request queue
+		}
+
 	}
 	//TODO: put timeout ?
 	/*
@@ -316,9 +322,9 @@ func PerformRequest(requestConfig RequestConfig, throttle chan int) error {
 		if err := json.Unmarshal(requestData, &body); err == nil {
 			if body != nil && body["resultCode"] == "00000" {
 				dataMap := (body["dataMap"]).(map[string]interface{})
-				accessToken := dataMap["accessToken"]
-				fmt.Println("PRE: get accesstoken success：%v", accessToken)
-				authValue := accessToken
+				accessToken := dataMap["accessToken"].(string)
+				go database.AddToken(requestConfig.Id, accessToken)
+				fmt.Println("PRE: get accesstoken success:", accessToken)
 			}
 
 		}

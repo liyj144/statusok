@@ -5,7 +5,8 @@
 		"port":8086,
 		"databaseName":"statusok",
 		"username":"root",
-		"password":"liyj131"
+		"password":"liyj131",
+		"authTable": "authtoken"
 	}
 },
 "notifications":{
