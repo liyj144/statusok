@@ -257,7 +257,7 @@ func PerformRequest(requestConfig RequestConfig, throttle chan int) error {
 		if err == nil {
 			authHeader[requestConfig.AuthKey] = authValue
 			fmt.Println("R: use accesstoken to request API:", authValue)
-			AddHeaders(request, authHeader)
+			AddCookie(request, authHeader)
 		} else {
 			// TODO add pre_request to request queue
 		}
@@ -363,6 +363,19 @@ func AddHeaders(req *http.Request, headers map[string]string) {
 	for key, value := range headers {
 		req.Header.Add(key, value)
 	}
+}
+
+func AddCookie(req *http.Request, cookies map[string]string) {
+	cookie := ""
+	count := 0
+	for key, value := range cookies {
+		if count > 0 {
+			cookie += ";"
+		}
+		cookie += key + "=" + value
+		count += 1
+	}
+	req.Header.Set("Cookie", cookie)
 }
 
 //convert params in map to url.Values
